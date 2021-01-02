@@ -1,0 +1,18 @@
+[Unit]
+Description=local mirror for pacman that uses torrents for package downloads
+
+[Service]
+IPAccounting=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+ExecStartPre=/usr/bin/pacmir daemon

@@ -1,0 +1,8 @@
+[Unit]
+Description=hosted mirror for pacman that uses torrents for package downloads
+
+[Service]
+ExecStartPre=/usr/bin/pacmir daemon
+
+[Install]
+Also=pacmir-mirror-rsync.timer

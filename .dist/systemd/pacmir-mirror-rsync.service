@@ -1,0 +1,6 @@
+[Unit]
+Description=rsync arch linux mirrors by time
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/true
