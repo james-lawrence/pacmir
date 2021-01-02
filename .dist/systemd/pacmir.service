@@ -15,4 +15,4 @@ RestrictRealtime=yes
 RestrictNamespaces=yes
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 SystemCallArchitectures=native
-ExecStartPre=/usr/bin/pacmir daemon
+ExecStartPre=/usr/bin/pacmir mirror

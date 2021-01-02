@@ -1,4 +1,4 @@
-package main
+package localmir
 
 import (
 	"io"
@@ -13,16 +13,18 @@ type packager interface {
 	Package(name string) (io.ReadCloser, error)
 }
 
-type torrent struct {
-	packager packager
-	fallback http.Handler
+// Download allow downloading packages.
+type Download struct {
+	Downloader packager
+	Fallback   http.Handler
 }
 
-func (t torrent) Bind(c alice.Chain, r *mux.Router) {
+// Bind to a router
+func (t Download) Bind(c alice.Chain, r *mux.Router) {
 	r.Handle("/{package}", c.ThenFunc(t.download))
 }
 
-func (t torrent) download(resp http.ResponseWriter, req *http.Request) {
+func (t Download) download(resp http.ResponseWriter, req *http.Request) {
 	var (
 		err    error
 		pdata  io.ReadCloser
@@ -31,8 +33,8 @@ func (t torrent) download(resp http.ResponseWriter, req *http.Request) {
 	)
 
 	log.Println("torrent download", params)
-	if pdata, err = t.packager.Package(pname); err != nil {
-		t.fallback.ServeHTTP(resp, req)
+	if pdata, err = t.Downloader.Package(pname); err != nil {
+		t.Fallback.ServeHTTP(resp, req)
 		return
 	}
 

@@ -1,4 +1,4 @@
-package main
+package localmir
 
 import (
 	"fmt"
@@ -14,16 +14,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-type proxied struct {
-	pacman *pacmir.CachedConfig
+// Proxied acts as a proxy for a pacman mirror
+type Proxied struct {
+	HTTPAddress string
+	Pacman      *pacmir.CachedConfig
 }
 
-func (t proxied) Bind(c alice.Chain, r *mux.Router) {
-	r.Handle("/{package}.db", c.ThenFunc(t.proxy))
-	r.Handle("/{package}.sig", c.ThenFunc(t.proxy))
+// Bind to a router
+func (t Proxied) Bind(c alice.Chain, r *mux.Router) {
+	r.Handle("/{package}.db", c.ThenFunc(t.Proxy))
+	r.Handle("/{package}.sig", c.ThenFunc(t.Proxy))
 }
 
-func (t proxied) proxy(resp http.ResponseWriter, req *http.Request) {
+// Proxy handler
+func (t Proxied) Proxy(resp http.ResponseWriter, req *http.Request) {
 	var (
 		err     error
 		proxied *http.Response
@@ -32,7 +36,7 @@ func (t proxied) proxy(resp http.ResponseWriter, req *http.Request) {
 		arch    = params["arch"]
 	)
 
-	mirrors := t.pacman.Mirrors(rname)
+	mirrors := t.Pacman.Mirrors(rname)
 
 	if len(mirrors) == 0 {
 		resp.WriteHeader(http.StatusNotFound)
@@ -47,7 +51,7 @@ func (t proxied) proxy(resp http.ResponseWriter, req *http.Request) {
 		}
 
 		proxieduri := strings.ReplaceAll(s, fmt.Sprintf("/%s/os/%s", rname, arch), req.RequestURI)
-		if strings.Contains(s, "localhost") {
+		if strings.Contains(s, t.HTTPAddress) {
 			continue
 		}
 
