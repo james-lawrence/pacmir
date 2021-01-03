@@ -1,1 +1,1 @@
-- command: set -o allexport; source %bwroot/bw.env; set +o allexport; gh release create v${PACMIR_RELEASE_VERSION} -d --target ${PACMIR_GIT_COMMIT_CHECKSUM} --title "pacmir ${PACMIR_RELEASE_VERSION}" --repo james-lawrence/pacmir -F %bwroot/changelog.md 
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; gh release create v${PACMIR_RELEASE_VERSION} --target ${PACMIR_GIT_COMMIT_CHECKSUM} --title "pacmir ${PACMIR_RELEASE_VERSION}" --repo james-lawrence/pacmir -F %bwroot/changelog.md 
