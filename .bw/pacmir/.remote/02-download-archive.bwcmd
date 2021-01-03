@@ -1,0 +1,2 @@
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; wget -O - -q https://github.com/james-lawrence/pacmir/archive/v${PACMIR_RELEASE_VERSION}.tar.gz > archive.tar.gz
+- command: echo "PACMIR_TARBALL_SHA256=\"$(sha256sum %bwroot/archive.tar.gz | cut -d " " -f 1)\"" >> %bwroot/bw.env

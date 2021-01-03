@@ -4,7 +4,7 @@
 - no need to manage a mirror list.
 - no need to figure out fastest/most reliable mirrors (bittorrent more or less does this automatically).
 - reduces infrastructure costs for the arch linux community (via bandwidth reductions).
-- removes the need for mirrors to even really exist.
+- in theory could support tooling for previous versions of packages
 
 ### how it works
 pacmir clones and rewrites /etc/pacman.d/mirrorlist (or /etc/pacman.d/mirrorlist.pacnew) prepending itself to the top of the list
@@ -35,7 +35,7 @@ CACHE_DIRECTORY=/var/cache/pacmir
 ```
 
 ```bash
-yay -S pacmir-daemon
+yay -S pacmir-mirror
 systemctl enable --now pacmir-mirror.service
 systemctl enable --now pacmir-mirror-rsync@pool.service
 systemctl enable --now pacmir-mirror-rsync@core.service

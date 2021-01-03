@@ -1,0 +1,4 @@
+deployDataDir: .bw/mirror
+deployTimeout: 1h0m0s
+environment: |
+  FOO=BAR

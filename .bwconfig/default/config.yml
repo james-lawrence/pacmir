@@ -1,0 +1,5 @@
+deployDataDir: .bw/pacmir
+deployTimeout: 1h0m0s
+environment: |
+  DEPLOY_BRANCH=origin/main
+  PACMIR_RELEASE_VERSION_PREFIX=0.1

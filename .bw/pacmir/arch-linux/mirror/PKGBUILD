@@ -1,0 +1,28 @@
+pkgname=pacmir
+pkgver=${ARCH_LINUX_PACKAGE_VERSION}
+pkgdesc="pacmir local proxy daemon"
+arch=('any')
+url="https://github.com/james-lawrence/pacmir"
+license=('CUSTOM')
+depends=(
+  'pacman>5'
+  'sudo'
+  'git'
+)
+makedepends=(
+  'go'
+)
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/james-lawrence/archive/${PACMIR_RELEASE_VERSION}")
+sha256sums=("${PACMIR_TARBALL_SHA256}")
+
+build() {
+  echo "HELLO WORLD ${srcdir}"
+  pwd
+  ls -lha ${srcdir}
+}
+
+package() {
+  echo "HELLO PACKAGE ${pkgdir}"
+  pwd
+  ls -lha ${pkgdir}
+}

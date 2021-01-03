@@ -1,0 +1,29 @@
+pkgname=pacmir
+pkgver=${PACMIR_RELEASE_VERSION}
+pkgrel=1
+pkgdesc="pacmir local proxy daemon"
+arch=('any')
+url="https://github.com/james-lawrence/pacmir"
+license=('CUSTOM')
+depends=(
+  'pacman>5'
+  'sudo'
+  'git'
+)
+makedepends=(
+  'go'
+)
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/james-lawrence/pacmir/archive/v${PACMIR_RELEASE_VERSION}.tar.gz")
+sha256sums=("${PACMIR_TARBALL_SHA256}")
+
+build() {
+  export GOBIN="${srcdir}/build/usr/bin"
+  pushd ${pkgname}-${pkgver}; go install -trimpath ./cmd/...; popd
+}
+
+package() {
+  pwd
+  ls -lha ${srcdir}/*
+  install -D ${srcdir}/build/usr/bin/* -t ${pkgdir}/usr/bin
+  # install -D ${srcdir}/.dist/usr/lib/systemd/system/* -t ${pkgdir}/usr/lib/systemd/system
+}

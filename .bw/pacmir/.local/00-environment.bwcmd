@@ -1,0 +1,11 @@
+- command: "echo %H %m %d %f %u %U %h %bwroot %bwcwd %%"
+- command: git fetch --all
+- command: git rev-parse --verify ${DEPLOY_BRANCH} > git.commit
+- command: echo "PACMIR_GIT_COMMIT_CHECKSUM=\"$(git rev-parse --verify ${DEPLOY_BRANCH})\"" >> %bwroot/bw.env
+- command: echo "PACMIR_GIT_COMMIT_SHORTSTAMP=\"$(git log -1 --format='%%h' ${DEPLOY_BRANCH})\"" >> %bwroot/bw.env
+- command: echo "PACMIR_GIT_COMMIT_TIMESTAMP=\"$(git log -1 --format='%ct' ${DEPLOY_BRANCH})\"" >> %bwroot/bw.env
+- command: echo "PACMIR_GIT_COMMIT_DATESTAMP=\"$(git log -1 --format='%cs' ${DEPLOY_BRANCH})\"" >> %bwroot/bw.env
+- command: echo "PACMIR_GIT_COMMIT_AUTHORSTAMP=\"$(git log -1 --format='%an' ${DEPLOY_BRANCH})\"" >> %bwroot/bw.env
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; echo "PACMIR_RELEASE_VERSION=${PACMIR_RELEASE_VERSION_PREFIX}.${PACMIR_GIT_COMMIT_TIMESTAMP}" >> %bwroot/bw.env
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; cat changelog.template.md | envsubst > %bwroot/changelog.md
+- command: cat %bwroot/changelog.md

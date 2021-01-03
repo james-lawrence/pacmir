@@ -14,9 +14,11 @@ func main() {
 		Daemon Daemon `cmd:"" help:"local mirror daemon" default:"1"`
 		Mirror mirror `cmd:"" help:"hosted mirrior daemon"`
 	}
+
 	var (
 		cli CLI
 	)
+
 	ctx := kong.Parse(&cli)
 	ctx.FatalIfErrorf(
 		ctx.Run(&context{Config: cli.Config}),

@@ -1,0 +1,8 @@
+- command: pwd
+- command: ls -lha 
+- command: rm -rf .dist/arch-linux/daemon/*
+- command: rm -rf .dist/arch-linux/mirror/*
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; cat arch-linux/daemon/PKGBUILD | envsubst '${PACMIR_RELEASE_VERSION} ${PACMIR_TARBALL_SHA256}' > .dist/arch-linux/daemon/PKGBUILD
+- command: set -o allexport; source %bwroot/bw.env; set +o allexport; cat arch-linux/mirror/PKGBUILD | envsubst '${PACMIR_RELEASE_VERSION} ${PACMIR_TARBALL_SHA256}' > .dist/arch-linux/mirror/PKGBUILD
+- command: cat .dist/arch-linux/daemon/PKGBUILD
+- command: cd .dist/arch-linux/daemon; makepkg
