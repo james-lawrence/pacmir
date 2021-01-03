@@ -1,6 +1,6 @@
 pkgname=pacmir
 pkgver=${PACMIR_RELEASE_VERSION}
-pkgrel=1
+pkgrel=${PACMIR_ARCH_LINUX_EPOCH}
 pkgdesc="pacmir local proxy daemon"
 arch=('any')
 url="https://github.com/james-lawrence/pacmir"
@@ -24,6 +24,7 @@ build() {
 package() {
   pwd
   ls -lha ${srcdir}/*
+  ls -lha 
   install -D ${srcdir}/build/usr/bin/* -t ${pkgdir}/usr/bin
-  # install -D ${srcdir}/.dist/usr/lib/systemd/system/* -t ${pkgdir}/usr/lib/systemd/system
+  install -D ${srcdir}/${pkgname}-${pkgver}/.bw/pacmir/arch-linux/daemon/usr/lib/systemd/system/* -t ${pkgdir}/usr/lib/systemd/system
 }
