@@ -5,3 +5,6 @@ Description=Mirror arch almost every two hours
 OnBootSec=15min
 OnUnitActiveSec=2h10m
 AccuracySec=10min
+
+[Install]
+RequiredBy=pacmir-mirror.service
