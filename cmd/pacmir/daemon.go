@@ -7,11 +7,14 @@ import (
 	"os"
 	"path/filepath"
 
+	alpm "github.com/Jguer/go-alpm/v2"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
 	"github.com/james-lawrence/pacmir"
 	"github.com/james-lawrence/pacmir/internal/httputilx"
 	"github.com/james-lawrence/pacmir/localmir"
 	"github.com/james-lawrence/pacmir/mirrors"
+	"github.com/james-lawrence/torrent"
 	"github.com/justinas/alice"
 	"github.com/pkg/errors"
 )
@@ -25,10 +28,17 @@ type Daemon struct {
 // Run the command
 func (t *Daemon) Run(ctx *context) (err error) {
 	var (
+		tclient    *torrent.Client
 		middleware = alice.New(
 			httputilx.RouteInvokedHandler,
 		)
 		router = mux.NewRouter()
+	)
+
+	tclient, err = torrent.NewClient(
+		torrent.NewDefaultClientConfig(
+			torrent.ClientConfigSeed(true),
+		),
 	)
 
 	log.Println("initiating local mirror daemon", t.HTTPBind)
@@ -45,7 +55,6 @@ func (t *Daemon) Run(ctx *context) (err error) {
 		}
 	}
 	cconfig := pacmir.NewCachedConfig(ctx.Config)
-
 	prouter := router.PathPrefix("/{repo}/os/{arch}").Subrouter()
 	fallback := localmir.Proxied{
 		HTTPAddress: t.HTTPBind,
@@ -71,7 +80,7 @@ type fspackager struct {
 	cached *pacmir.CachedConfig
 }
 
-func (t fspackager) Package(name string) (io.ReadCloser, error) {
+func (t fspackager) Package(repo string, name string) (io.ReadCloser, error) {
 	config := t.cached.Current()
 	if config == nil {
 		return nil, errors.New("missing pacman configuration")
@@ -79,11 +88,45 @@ func (t fspackager) Package(name string) (io.ReadCloser, error) {
 
 	for _, d := range config.CacheDir {
 		path := filepath.Join(d, name)
-		log.Println("checking", path)
 		if _, err := os.Stat(path); err == nil {
 			return os.Open(path)
 		}
 	}
 
 	return nil, errors.New("package not found")
+}
+
+type torrentpackager struct {
+	client   *torrent.Client
+	cached   *pacmir.CachedConfig
+	fallback fspackager
+}
+
+func (t torrentpackager) Package(repo string, name string) (_ io.ReadCloser, err error) {
+	var (
+		alpmh *alpm.Handle
+		db    alpm.IDB
+		pkg   alpm.IPackage
+	)
+
+	config := t.cached.Current()
+	if config == nil {
+		return nil, errors.New("missing pacman configuration")
+	}
+
+	log.Println("Downloading", repo, name, spew.Sdump(config))
+	if alpmh, err = alpm.Initialize(config.RootDir, config.DBPath); err != nil {
+		return nil, err
+	}
+	defer alpmh.Release()
+
+	if db, err = alpmh.RegisterSyncDB(repo, 0); err != nil {
+		return nil, err
+	}
+
+	if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
+		return nil, err
+	}
+
+	return
 }

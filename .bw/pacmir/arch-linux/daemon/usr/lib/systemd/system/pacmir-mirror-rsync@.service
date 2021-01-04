@@ -2,10 +2,12 @@
 Description=pacmir rsync from upstream arch linux mirrors
 
 [Service]
-Environment=RSYNC_OPTIONS="-rtlH -4 --safe-links --no-motd --exclude=.*"
-EnvironmentFile=-%E/pacmir/defaults.env
-EnvironmentFile=-%E/pacmir/%i.defaults.env
-ExecStart=/usr/bin/rsync ${RSYNC_OPTIONS} ${REPOSITORY}/%i ${CACHE_DIRECTORY}/%i
+Type=oneshot
+ConfigurationDirectory=%p
+CacheDirectory=pacmir
+EnvironmentFile=-%E/%p/defaults.env
+EnvironmentFile=-%E/%p/%i.defaults.env
+ExecStart=/usr/bin/rsync --progress -rtlhH --safe-links --no-motd --exclude=.* ${REPOSITORY}/%i/ ${CACHE_DIRECTORY}/%i/
 
 [Install]
 RequiredBy=pacmir-mirror-rsync.service

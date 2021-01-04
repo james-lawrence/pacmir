@@ -10,7 +10,7 @@ import (
 )
 
 type packager interface {
-	Package(name string) (io.ReadCloser, error)
+	Package(repo, name string) (io.ReadCloser, error)
 }
 
 // Download allow downloading packages.
@@ -30,10 +30,11 @@ func (t Download) download(resp http.ResponseWriter, req *http.Request) {
 		pdata  io.ReadCloser
 		params = mux.Vars(req)
 		pname  = params["package"]
+		rname  = params["repo"]
 	)
 
 	log.Println("torrent download", params)
-	if pdata, err = t.Downloader.Package(pname); err != nil {
+	if pdata, err = t.Downloader.Package(rname, pname); err != nil {
 		t.Fallback.ServeHTTP(resp, req)
 		return
 	}

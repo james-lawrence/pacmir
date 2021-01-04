@@ -7,7 +7,7 @@
 - in theory could support tooling for previous versions of packages
 
 ### how it works
-pacmir clones and rewrites /etc/pacman.d/mirrorlist (or /etc/pacman.d/mirrorlist.pacnew) prepending itself to the top of the list
+pacmir clones and rewrites /etc/pacman.d/mirrorlist prepending itself to the top of the list
 thereby becoming the first host pacman will try.
 
 now any requests to download a packages will instead use torrents, falling back to the remaining
@@ -17,7 +17,6 @@ database and signatures requests are upstreamed to the original mirrorlist serve
 
 ### local installation
 ```bash
-yay -S pacmir # AUR helper of choice.
 systemctl enable --now pacmir.service
 ```
 
@@ -35,11 +34,10 @@ CACHE_DIRECTORY=/var/cache/pacmir
 ```
 
 ```bash
-yay -S pacmir-mirror
-systemctl enable --now pacmir-mirror.service
 systemctl enable --now pacmir-mirror-rsync@pool.service
 systemctl enable --now pacmir-mirror-rsync@core.service
 systemctl enable --now pacmir-mirror-rsync@community.service
 systemctl enable --now pacmir-mirror-rsync@extra.service
 systemctl enable --now pacmir-mirror-rsync@multilib.service
+systemctl enable --now pacmir-mirror.service
 ```
