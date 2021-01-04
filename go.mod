@@ -3,7 +3,6 @@ module github.com/james-lawrence/pacmir
 go 1.15
 
 require (
-	github.com/Jguer/go-alpm/v2 v2.0.2
 	github.com/Morganamilo/go-pacmanconf v0.0.0-20180910220353-9c5265e1b14f
 	github.com/RoaringBitmap/roaring v0.5.5 // indirect
 	github.com/alecthomas/kong v0.2.12
@@ -13,13 +12,11 @@ require (
 	github.com/anacrolix/multiless v0.0.0-20200413040533-acfd16f65d5d // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1
-	github.com/etcd-io/bbolt v1.3.3 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/james-lawrence/torrent v0.0.0-20210104123740-cc10d3340214
 	github.com/justinas/alice v1.2.0
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/tinylib/msgp v1.1.5 // indirect
 	github.com/willf/bitset v1.1.11 // indirect

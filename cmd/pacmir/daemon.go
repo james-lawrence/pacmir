@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	alpm "github.com/Jguer/go-alpm/v2"
-	"github.com/davecgh/go-spew/spew"
+	// alpm "github.com/Jguer/go-alpm/v2"
+
 	"github.com/gorilla/mux"
 	"github.com/james-lawrence/pacmir"
 	"github.com/james-lawrence/pacmir/internal/httputilx"
@@ -108,31 +108,31 @@ type torrentpackager struct {
 }
 
 func (t torrentpackager) Package(repo string, name string) (_ io.ReadCloser, err error) {
-	var (
-		alpmh *alpm.Handle
-		db    alpm.IDB
-		pkg   alpm.IPackage
-	)
+	// var (
+	// 	alpmh *alpm.Handle
+	// 	db    alpm.IDB
+	// 	pkg   alpm.IPackage
+	// )
 
-	config := t.cached.Current()
-	if config == nil {
-		return nil, errors.New("missing pacman configuration")
-	}
+	// config := t.cached.Current()
+	// if config == nil {
+	// 	return nil, errors.New("missing pacman configuration")
+	// }
 
-	log.Println("Downloading", repo, name, spew.Sdump(config))
-	if alpmh, err = alpm.Initialize(config.RootDir, config.DBPath); err != nil {
-		return nil, err
-	}
-	defer alpmh.Release()
+	// log.Println("Downloading", repo, name, spew.Sdump(config))
+	// if alpmh, err = alpm.Initialize(config.RootDir, config.DBPath); err != nil {
+	// 	return nil, err
+	// }
+	// defer alpmh.Release()
 
-	if db, err = alpmh.RegisterSyncDB(repo, 0); err != nil {
-		return nil, err
-	}
+	// if db, err = alpmh.RegisterSyncDB(repo, 0); err != nil {
+	// 	return nil, err
+	// }
 
-	if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
-		return nil, err
-	}
-	_ = pkg
+	// if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
+	// 	return nil, err
+	// }
+	// _ = pkg
 
 	return nil, errors.New("not implemented")
 }
