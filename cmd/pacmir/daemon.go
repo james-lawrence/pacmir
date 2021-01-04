@@ -41,6 +41,11 @@ func (t *Daemon) Run(ctx *context) (err error) {
 		),
 	)
 
+	if err != nil {
+		return errors.Wrap(err, "unable to create torrent service")
+	}
+	_ = tclient
+
 	log.Println("initiating local mirror daemon", t.HTTPBind)
 	for _, mirror := range t.Mirrors {
 		if _, err = os.Stat(mirror); err != nil {
@@ -127,6 +132,7 @@ func (t torrentpackager) Package(repo string, name string) (_ io.ReadCloser, err
 	if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
 		return nil, err
 	}
+	_ = pkg
 
-	return
+	return nil, errors.New("not implemented")
 }

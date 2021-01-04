@@ -12,7 +12,7 @@ func main() {
 	type CLI struct {
 		Config string `required:"" default:"/etc/pacman.conf"`
 		Daemon Daemon `cmd:"" help:"local mirror daemon" default:"1"`
-		Mirror mirror `cmd:"" help:"hosted mirrior daemon"`
+		Mirror Mirror `cmd:"" help:"hosted mirrior daemon"`
 	}
 
 	var (
