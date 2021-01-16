@@ -4,7 +4,8 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-type context struct {
+// CmdContext ...
+type CmdContext struct {
 	Config string
 }
 
@@ -13,6 +14,7 @@ func main() {
 		Config string `required:"" default:"/etc/pacman.conf"`
 		Daemon Daemon `cmd:"" help:"local mirror daemon" default:"1"`
 		Mirror Mirror `cmd:"" help:"hosted mirrior daemon"`
+		Spike  Spike  `cmd:"" help:"spike"`
 	}
 
 	var (
@@ -21,6 +23,6 @@ func main() {
 
 	ctx := kong.Parse(&cli)
 	ctx.FatalIfErrorf(
-		ctx.Run(&context{Config: cli.Config}),
+		ctx.Run(&CmdContext{Config: cli.Config}),
 	)
 }

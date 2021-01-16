@@ -15,6 +15,12 @@ mirrors if the torrent cannot be found.
 
 database and signatures requests are upstreamed to the original mirrorlist servers.
 
+### development build
+```bash
+# alpm library causes a multiple definition error for its logcallback function.
+CGO_LDFLAGS="-Wl,--allow-multiple-definition" go install ./cmd/...
+```
+
 ### local installation
 ```bash
 systemctl enable --now pacmir.service

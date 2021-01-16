@@ -7,14 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
-	// alpm "github.com/Jguer/go-alpm/v2"
-
 	"github.com/gorilla/mux"
 	"github.com/james-lawrence/pacmir"
 	"github.com/james-lawrence/pacmir/internal/httputilx"
 	"github.com/james-lawrence/pacmir/localmir"
-	"github.com/james-lawrence/pacmir/mirrors"
-	"github.com/james-lawrence/torrent"
 	"github.com/justinas/alice"
 	"github.com/pkg/errors"
 )
@@ -26,39 +22,57 @@ type Daemon struct {
 }
 
 // Run the command
-func (t *Daemon) Run(ctx *context) (err error) {
+func (t *Daemon) Run(ctx *CmdContext) (err error) {
 	var (
-		tclient    *torrent.Client
+		// tsocket    *utp.Socket
+		// tclient    *torrent.Client
 		middleware = alice.New(
 			httputilx.RouteInvokedHandler,
 		)
 		router = mux.NewRouter()
 	)
 
-	tclient, err = torrent.NewClient(
-		torrent.NewDefaultClientConfig(
-			torrent.ClientConfigSeed(true),
-		),
-	)
+	// if tsocket, err = utp.NewSocket("udp", ":0"); err != nil {
+	// 	return err
+	// }
 
-	if err != nil {
-		return errors.Wrap(err, "unable to create torrent service")
-	}
-	_ = tclient
+	// tclient, err = torrent.NewClient(
+	// 	torrent.NewDefaultClientConfig(
+	// 		torrent.ClientConfigSeed(true),
+	// 		func(c *torrent.ClientConfig) {
+	// 			c.DHTOnQuery = func(query *krpc.Msg, source net.Addr) bool {
+	// 				log.Println("query", source.String(), spew.Sdump(query))
+	// 				return true
+	// 			}
+	// 			c.DHTAnnouncePeer = func(infoHash metainfo.Hash, ip net.IP, port int, portOK bool) {
+	// 				log.Printf("announce peer %s - %s:%d %t\n", infoHash.String(), ip.String(), port, portOK)
+	// 			}
+	// 			c.DhtStartingNodes = func() (peers []dht.Addr, err error) {
+	// 				peers = []dht.Addr{
+	// 					dht.NewAddr(&net.UDPAddr{IP: net.ParseIP("127.0.0.1"), Port: 4002}),
+	// 				}
+	// 				return peers, err
+	// 			}
+	// 		},
+	// 	),
+	// )
+	// if tclient, err = torrent.NewSocketsBind(sockets.New(tsocket, &net.Dialer{LocalAddr: tsocket.Addr()})).Bind(tclient, err); err != nil {
+	// 	return errors.Wrap(err, "unable to create torrent service")
+	// }
 
 	log.Println("initiating local mirror daemon", t.HTTPBind)
-	for _, mirror := range t.Mirrors {
-		if _, err = os.Stat(mirror); err != nil {
-			log.Println("ignored mirror file (missing)", mirror)
-			continue
-		}
+	// for _, mirror := range t.Mirrors {
+	// 	if _, err = os.Stat(mirror); err != nil {
+	// 		log.Println("ignored mirror file (missing)", mirror)
+	// 		continue
+	// 	}
 
-		log.Println("rewriting mirror file", mirror)
+	// 	log.Println("rewriting mirror file", mirror)
 
-		if err = mirrors.Rewrite(t.HTTPBind, mirror); err != nil {
-			return err
-		}
-	}
+	// 	if err = mirrors.Rewrite(t.HTTPBind, mirror); err != nil {
+	// 		return err
+	// 	}
+	// }
 	cconfig := pacmir.NewCachedConfig(ctx.Config)
 	prouter := router.PathPrefix("/{repo}/os/{arch}").Subrouter()
 	fallback := localmir.Proxied{
@@ -78,6 +92,10 @@ func (t *Daemon) Run(ctx *context) (err error) {
 
 	httputilx.NotFound(middleware).Bind(router)
 
+	// torrentpackager{
+	// 	client: tclient,
+	// 	cached: cconfig,
+	// }.Package("core", "openssh")
 	return http.ListenAndServe(t.HTTPBind, router)
 }
 
@@ -101,38 +119,41 @@ func (t fspackager) Package(repo string, name string) (io.ReadCloser, error) {
 	return nil, errors.New("package not found")
 }
 
-type torrentpackager struct {
-	client   *torrent.Client
-	cached   *pacmir.CachedConfig
-	fallback fspackager
-}
+// type torrentpackager struct {
+// 	client   *torrent.Client
+// 	cached   *pacmir.CachedConfig
+// 	fallback fspackager
+// }
 
-func (t torrentpackager) Package(repo string, name string) (_ io.ReadCloser, err error) {
-	// var (
-	// 	alpmh *alpm.Handle
-	// 	db    alpm.IDB
-	// 	pkg   alpm.IPackage
-	// )
+// func (t torrentpackager) Package(repo string, name string) (_ io.ReadCloser, err error) {
+// 	var (
+// 		alpmh *alpm.Handle
+// 		db    alpm.IDB
+// 		pkg   alpm.IPackage
+// 	)
 
-	// config := t.cached.Current()
-	// if config == nil {
-	// 	return nil, errors.New("missing pacman configuration")
-	// }
+// 	config := t.cached.Current()
+// 	if config == nil {
+// 		return nil, errors.New("missing pacman configuration")
+// 	}
 
-	// log.Println("Downloading", repo, name, spew.Sdump(config))
-	// if alpmh, err = alpm.Initialize(config.RootDir, config.DBPath); err != nil {
-	// 	return nil, err
-	// }
-	// defer alpmh.Release()
+// 	log.Println("Downloading", repo, name)
+// 	if alpmh, err = alpm.Initialize(config.RootDir, config.DBPath); err != nil {
+// 		return nil, err
+// 	}
+// 	defer alpmh.Release()
 
-	// if db, err = alpmh.RegisterSyncDB(repo, 0); err != nil {
-	// 	return nil, err
-	// }
+// 	if db, err = alpmh.RegisterSyncDB(repo, 0); err != nil {
+// 		return nil, err
+// 	}
 
-	// if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
-	// 	return nil, err
-	// }
-	// _ = pkg
+// 	if pkg, err = db.PkgCache().FindSatisfier(name); err != nil {
+// 		return nil, err
+// 	}
 
-	return nil, errors.New("not implemented")
-}
+// 	log.Println("WAAAT", pkg.Name(), pkg.SHA256Sum(), pkg.Size())
+// 	for _, s := range t.client.DhtServers() {
+// 		s.Announce([20]byte{}, 4000, true)
+// 	}
+// 	return nil, errors.New("not implemented")
+// }
