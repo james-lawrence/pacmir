@@ -14,6 +14,7 @@ require (
 	github.com/anacrolix/utp v0.0.0-20180219060659-9e0e1d1d0572 // indirect
 	github.com/benbjohnson/immutable v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1
+	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/mux v1.8.0
@@ -22,16 +23,18 @@ require (
 	github.com/ipfs/go-ipfs-config v0.11.0
 	github.com/ipfs/go-ipfs-files v0.0.8
 	github.com/ipfs/interface-go-ipfs-core v0.4.0
+	github.com/james-lawrence/bw v0.0.0-20210425145446-670fb1be1e2c
 	github.com/james-lawrence/torrent v0.0.0-20210104123740-cc10d3340214 // indirect
 	github.com/justinas/alice v1.2.0
 	github.com/libp2p/go-libp2p-peer v0.2.0
 	github.com/libp2p/go-libp2p-peerstore v0.2.6
 	github.com/multiformats/go-multiaddr v0.3.1
 	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tinylib/msgp v1.1.5 // indirect
 	github.com/willf/bitset v1.1.11 // indirect
 	go.etcd.io/bbolt v1.3.5 // indirect
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
-	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
+	google.golang.org/protobuf v1.26.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

@@ -2,9 +2,9 @@
 
 ### benefits
 - no need to manage a mirror list.
-- no need to figure out fastest/most reliable mirrors (bittorrent more or less does this automatically).
-- reduces infrastructure costs for the arch linux community (via bandwidth reductions).
-- in theory could support tooling for previous versions of packages
+- no need to figure out fastest/most reliable mirrors.
+- no need to host dedicated infrastructure for packages, making costs for arch linux more democratic.
+- allows automatic support for previous versions of packages (as long as someone running pacmir has the package still available).
 
 ### how it works
 pacmir clones and rewrites /etc/pacman.d/mirrorlist prepending itself to the top of the list

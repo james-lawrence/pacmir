@@ -32,47 +32,53 @@ func (t *Daemon) Run(ctx *CmdContext) (err error) {
 		router = mux.NewRouter()
 	)
 
-	// if tsocket, err = utp.NewSocket("udp", ":0"); err != nil {
+	// var (
+	// 	l net.Listener
+	// 	m = muxer.New()
+	// 	p2ppriv    []byte
+	// )
+
+	// if p2ppriv, err = rsax.CachedAuto("p2p.key"); err != nil {
 	// 	return err
 	// }
 
-	// tclient, err = torrent.NewClient(
-	// 	torrent.NewDefaultClientConfig(
-	// 		torrent.ClientConfigSeed(true),
-	// 		func(c *torrent.ClientConfig) {
-	// 			c.DHTOnQuery = func(query *krpc.Msg, source net.Addr) bool {
-	// 				log.Println("query", source.String(), spew.Sdump(query))
-	// 				return true
-	// 			}
-	// 			c.DHTAnnouncePeer = func(infoHash metainfo.Hash, ip net.IP, port int, portOK bool) {
-	// 				log.Printf("announce peer %s - %s:%d %t\n", infoHash.String(), ip.String(), port, portOK)
-	// 			}
-	// 			c.DhtStartingNodes = func() (peers []dht.Addr, err error) {
-	// 				peers = []dht.Addr{
-	// 					dht.NewAddr(&net.UDPAddr{IP: net.ParseIP("127.0.0.1"), Port: 4002}),
-	// 				}
-	// 				return peers, err
-	// 			}
-	// 		},
-	// 	),
+	// tmpl, err := tlsx.X509Template(
+	// 	10*360*24*time.Hour,
+	// 	tlsx.X509OptionCA(),
+	// 	tlsx.X509OptionSubject(pkix.Name{
+	// 		CommonName: "pacmir.lan",
+	// 	}),
+	// 	tlsx.X509OptionHosts("pacmir.lan"),
 	// )
-	// if tclient, err = torrent.NewSocketsBind(sockets.New(tsocket, &net.Dialer{LocalAddr: tsocket.Addr()})).Bind(tclient, err); err != nil {
-	// 	return errors.Wrap(err, "unable to create torrent service")
+	// if err != nil {
+	// 	return err
 	// }
+	// _, certblock, err := tlsx.SelfSigned(rsax.MustDecode(p2ppriv), tmpl)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// cert, err := tls.X509KeyPair(certblock, p2ppriv)
+	// if err != nil {
+	// 	log.Println("certblock", len(certblock))
+	// 	return errors.Wrap(err, "failed to parse x509 keypair")
+	// }
+
+	// tlsconfig := &tls.Config{
+	// 	Certificates: []tls.Certificate{
+	// 		cert,
+	// 	},
+	// 	NextProtos: []string{"bw.mux"},
+	// }
+	// if l, err = net.Listen("tcp", t.HTTPBind); err != nil {
+	// 	return err
+	// }
+	// l = tls.NewListener(l, tlsconfig)
+
+	// go muxer.Background(context.Background(), m, l)
 
 	log.Println("initiating local mirror daemon", t.HTTPBind)
-	// for _, mirror := range t.Mirrors {
-	// 	if _, err = os.Stat(mirror); err != nil {
-	// 		log.Println("ignored mirror file (missing)", mirror)
-	// 		continue
-	// 	}
 
-	// 	log.Println("rewriting mirror file", mirror)
-
-	// 	if err = mirrors.Rewrite(t.HTTPBind, mirror); err != nil {
-	// 		return err
-	// 	}
-	// }
 	cconfig := pacmir.NewCachedConfig(ctx.Config)
 	prouter := router.PathPrefix("/{repo}/os/{arch}").Subrouter()
 	fallback := localmir.Proxied{
@@ -92,11 +98,15 @@ func (t *Daemon) Run(ctx *CmdContext) (err error) {
 
 	httputilx.NotFound(middleware).Bind(router)
 
-	// torrentpackager{
-	// 	client: tclient,
-	// 	cached: cconfig,
-	// }.Package("core", "openssh")
 	return http.ListenAndServe(t.HTTPBind, router)
+	// return func(l net.Listener, err error) error {
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	http.Serve(l, router)
+	// 	return nil
+	// }(m.Default("http", l.Addr()))
 }
 
 type fspackager struct {
